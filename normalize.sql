@@ -53,6 +53,7 @@ CREATE TABLE AUTHORS (
     FOREIGN KEY (Author_ID) REFERENCES BOOK_AUTHORS(Author_ID)
 );
 
+-- Please change the following directory to be where your books.csv file is located 
 DROP TABLE IF EXISTS BOOK_LOANS;
 CREATE TABLE BOOK_LOANS (
     Loan_ID INT,
@@ -125,3 +126,5 @@ SELECT BA.Author_ID,
        TRIM(SUBSTRING_INDEX(RD.Author, ' ', -1)) AS LName
 FROM RAW_DATA RD
 JOIN BOOK_AUTHORS BA ON RD.ISBN = BA.ISBN;
+
+DROP TABLE IF EXISTS RAW_DATA;
