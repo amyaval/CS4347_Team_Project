@@ -84,13 +84,13 @@ CREATE TABLE BORROWER (
     CONSTRAINT PK_BORROWER PRIMARY KEY (Card_ID)
 );
 
-LOAD DATA LOCAL INFILE '/Users/thebenzsecrets/CS4347_Team_Project/books.csv'
+LOAD DATA LOCAL INFILE '/Users/lynn/Documents/School/2025 Fall/Database Systems/Library System/books.csv'
 INTO TABLE RAW_DATA
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE '/Users/thebenzsecrets/CS4347_Team_Project/borrowers.csv'
+LOAD DATA LOCAL INFILE '/Users/lynn/Documents/School/2025 Fall/Database Systems/Library System/borrowers.csv'
 INTO TABLE RAW_BORROWER_DATA
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
