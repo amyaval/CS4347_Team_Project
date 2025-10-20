@@ -39,6 +39,7 @@ CREATE TABLE AUTHORS (
     FOREIGN KEY (Author_ID) REFERENCES BOOK_AUTHORS(Author_ID)
 );
 
+-- Please change the following directory to be where your books.csv file is located 
 LOAD DATA LOCAL INFILE '/Users/lynn/Documents/School/2025 Fall/Database Systems/Library System/books.csv'
 INTO TABLE RAW_DATA
 FIELDS TERMINATED BY '\t'
