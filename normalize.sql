@@ -53,6 +53,16 @@ CREATE TABLE AUTHORS (
     FOREIGN KEY (Author_ID) REFERENCES BOOK_AUTHORS(Author_ID)
 );
 
+DROP TABLE IF EXISTS BORROWER;
+CREATE TABLE BORROWER (
+    Card_ID VARCHAR(6),
+    Ssn VARCHAR(11),
+    Bname VARCHAR(255),
+    Address VARCHAR(255),
+    Phone VARCHAR(14),
+    CONSTRAINT PK_BORROWER PRIMARY KEY (Card_ID)
+);
+
 -- Please change the following directory to be where your books.csv file is located 
 DROP TABLE IF EXISTS BOOK_LOANS;
 CREATE TABLE BOOK_LOANS (
@@ -74,23 +84,13 @@ CREATE TABLE FINES (
     CONSTRAINT FK_BOOK_LOANS FOREIGN KEY (Loan_ID) REFERENCES BOOK_LOANS(Loan_ID)
 );
 
-DROP TABLE IF EXISTS BORROWER;
-CREATE TABLE BORROWER (
-    Card_ID VARCHAR(6),
-    Ssn VARCHAR(11),
-    Bname VARCHAR(255),
-    Address VARCHAR(255),
-    Phone VARCHAR(14),
-    CONSTRAINT PK_BORROWER PRIMARY KEY (Card_ID)
-);
-
-LOAD DATA LOCAL INFILE '/Users/lynn/Documents/School/2025 Fall/Database Systems/Library System/books.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/valdi/Documents/Database_Team_Project_csv/books.csv'
 INTO TABLE RAW_DATA
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE '/Users/lynn/Documents/School/2025 Fall/Database Systems/Library System/borrowers.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/valdi/Documents/Database_Team_Project_csv/borrowers.csv'
 INTO TABLE RAW_BORROWER_DATA
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
