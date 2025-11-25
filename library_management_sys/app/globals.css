@@ -10,13 +10,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  
+  --color-primary: #B60000;
+  --color-secondary: #DF0000;
+  --color-inner-containers: #F6F6F6;
+  --color-stroke-containers: #EBEBEB;
+  --color-book-box-bg: #FFFFFF;
+  --color-book-box-stroke: #EBEBEB;
+  --color-text-primary: #000000;
+  --color-text-secondary: #929292;
+  --color-text-input: #B3B3B3;
 }
 
 body {
