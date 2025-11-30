@@ -1,16 +1,16 @@
 'use client';
 
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { Header } from '../components/Header';
 
 export default function Home() {
   const { logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    router.replace('/login');
   };
 
   return (

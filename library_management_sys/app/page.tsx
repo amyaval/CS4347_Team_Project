@@ -1,5 +1,5 @@
-import AppRouter from './components/AppRouter';
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <AppRouter />;
+  redirect("/home");
 }

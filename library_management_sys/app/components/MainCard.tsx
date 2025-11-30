@@ -1,13 +1,22 @@
-'use client';
+"use client";
 
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isAuthenticated, router]);
+
+  // Prevent rendering the protected content before redirecting
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return null; // you can return a spinner if you prefer
   }
 
   return <>{children}</>;
