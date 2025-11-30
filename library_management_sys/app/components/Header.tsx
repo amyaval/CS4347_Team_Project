@@ -6,10 +6,11 @@ export const Header = () => {
     { href: '/', text: 'Home' },
     { href: '/about', text: 'About' },
     { href: '/contact', text: 'Contact' },
+    { href: '/book_search', text: 'Catalog' },
   ];
 
   return (
-    <Fragment className="flex flex-row">
+    <div className="flex flex-row">
       <header className="bg-gray-800 text-white flex-col justify-between items-center">
         {/* Logo */}
         <div className="flex items-center">
@@ -36,6 +37,6 @@ export const Header = () => {
           </Link>
         </div>
       </header>
-    </Fragment>
+    </div>
   );
 };

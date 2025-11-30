@@ -11,7 +11,7 @@ export async function GET(request: Request) {
       return Response.json({ error: 'Search term is required' }, { status: 400 });
     }
     
-    // Call your function with the search term
+    // Call function with the search term
     const results = await book_search_availability(searchTerm);
     
     return Response.json(results);

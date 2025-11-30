@@ -3,7 +3,9 @@ import { executeQuery } from '@/lib/db';
 export interface Book {
   ISBN: string;
   Title: string;
-  Author: string;
+  Fname: string;
+  Minit: string;
+  Lname: string;
   Date_in: Date;
   Date_out: Date;
 }
