@@ -1,7 +1,7 @@
-import { executeQuery } from "../db";
+import { executeQuery } from "@/lib/db";
 
-interface CheckInResult {
-  Loan_id: number;
+export interface CheckInResult {
+  Loan_ID: number;
   message: string;
 }
 
@@ -15,26 +15,26 @@ export async function checkInBooks(loanIds: number[]): Promise<CheckInResult[]> 
 
   for (const loanId of loanIds) {
     const loan = await executeQuery({
-      query: 'SELECT * FROM BOOK_LOANS WHERE Loan_id = ?',
+      query: 'SELECT * FROM `BOOK_LOANS` WHERE Loan_ID = ?',
       values: [loanId],
     });
 
     if (!loan.length) {
-      results.push({ Loan_id: loanId, message: 'Loan not found.' });
+      results.push({ Loan_ID: loanId, message: 'Loan not found.' });
       continue;
     }
 
-    if (loan[0].date_in) {
-      results.push({ Loan_id: loanId, message: 'Book already checked in.' });
+    if (loan[0].Date_in) {
+      results.push({ Loan_ID: loanId, message: 'Book already checked in.' });
       continue;
     }
 
     await executeQuery({
-      query: 'UPDATE BOOK_LOANS SET date_in = ? WHERE Loan_id = ?',
+      query: 'UPDATE `BOOK_LOANS` SET Date_in = ? WHERE Loan_ID = ?',
       values: [today, loanId],
     });
 
-    results.push({ Loan_id: loanId, message: 'Book checked in successfully.' });
+    results.push({ Loan_ID: loanId, message: 'Book checked in successfully.' });
   }
 
   return results;
