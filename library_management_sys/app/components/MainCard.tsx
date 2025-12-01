@@ -251,12 +251,98 @@ function FindUserContent() {
 }
 
 function CheckOutContent() {
+  const [isbn, setIsbn] = useState("");
+  const [cardId, setCardId] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const handleSubmit = async () => {
+    if (!isbn || !cardId) {
+      setMessage({ type: "error", text: "Please enter both ISBN and Card ID" });
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch("/api/mysql/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ISBN: isbn,
+          Card_id: cardId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Checkout failed");
+      }
+
+      setMessage({ type: "success", text: data.message || "Book checked out successfully" });
+      setIsbn("");
+      setCardId("");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An error occurred";
+      setMessage({ type: "error", text: errorMessage });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4" style={{ color: "#000000" }}>
         Check Out
       </h1>
-      <p style={{ color: "#929292" }}>Check Out content will go here</p>
+      <div className="flex flex-row justify-between mb-6 space-x-4">
+        <div className="w-full">
+          <div className="bg-[#F6F6F6] p-[1rem] space-x-[1.25rem] w-full border border-[#EBEBEB] rounded-lg flex flex-row">
+            <Search />
+            <input
+              type="text"
+              placeholder="Please enter ISBN"
+              className="w-full bg-transparent"
+              value={isbn}
+              onChange={(e) => setIsbn(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="bg-[#F6F6F6] p-[1rem] space-x-[1.25rem] w-full border border-[#EBEBEB] rounded-lg flex flex-row">
+            <Search />
+            <input
+              type="text"
+              placeholder="Please enter CardID"
+              className="w-full bg-transparent"
+              value={cardId}
+              onChange={(e) => setCardId(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+      {message && (
+        <div
+          className={`mb-4 p-3 rounded-lg ${
+            message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+      <div className="flex flex-row justify-end">
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="py-2 px-4 bg-red-700 rounded-sm text-white hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "Submitting..." : "Submit"}
+        </button>
+      </div>
     </div>
   );
 }
