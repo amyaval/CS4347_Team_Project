@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckSquare, BookOpen, User, BookPlus, Search, MoreVertical} from "lucide-react";
+import { CheckSquare, BookOpen, User, BookPlus, Search, MoreVertical } from "lucide-react";
+import Borrower from "./Borrower";
 
-type TabType = "dashboard" | "checkin" | "catalog" | "finduser" | "checkout";
+type TabType = "dashboard" | "checkin" | "catalog" | "finduser" | "checkout" | "borrower";
 
 interface NavbarProps {
   activeTab: TabType;
@@ -14,7 +15,7 @@ function Navbar({ activeTab, onTabChange }: NavbarProps) {
   const navItems = [
     { id: "checkin" as TabType, label: "Check In", icon: CheckSquare },
     { id: "catalog" as TabType, label: "Catalog", icon: BookOpen },
-    { id: "finduser" as TabType, label: "Find User", icon: User },
+    { id: "borrower" as TabType, label: "Users", icon: User },
     { id: "checkout" as TabType, label: "Check Out", icon: BookPlus },
   ];
 
@@ -147,9 +148,8 @@ function DashboardContent() {
                   </p>
                 </div>
                 <button
-                  className={`px-4 py-1 rounded text-white ${
-                    i === 3 ? "bg-red-400" : "bg-green-400"
-                  }`}
+                  className={`px-4 py-1 rounded text-white ${i === 3 ? "bg-red-400" : "bg-green-400"
+                    }`}
                 >
                   {i === 3 ? "Out" : "In"}
                 </button>
@@ -236,21 +236,21 @@ function CatalogContent() {
         const data = await res.json();
 
         const booksWithStatus = data.map((book: any) => {
-            const dateIn = book.Date_in ? new Date(book.Date_in) : null;
-            const dateOut = book.Date_out ? new Date(book.Date_out) : null;
-            
-            const isOut = dateOut && !dateIn;
+          const dateIn = book.Date_in ? new Date(book.Date_in) : null;
+          const dateOut = book.Date_out ? new Date(book.Date_out) : null;
 
-            // put together author name
-            const authorName = `${book.Fname} ${book.Minit ? book.Minit + ' ' : ''}${book.Lname}`;
-            return {
-                isbn: book.ISBN ?? book.Isbn ?? book.isbn ?? "",
-                title: book.Title,
-                authors: authorName,
-                date_in: dateIn,
-                date_out: dateOut,
-                status: isOut ? "Out" : "In",
-            };
+          const isOut = dateOut && !dateIn;
+
+          // put together author name
+          const authorName = `${book.Fname} ${book.Minit ? book.Minit + ' ' : ''}${book.Lname}`;
+          return {
+            isbn: book.ISBN ?? book.Isbn ?? book.isbn ?? "",
+            title: book.Title,
+            authors: authorName,
+            date_in: dateIn,
+            date_out: dateOut,
+            status: isOut ? "Out" : "In",
+          };
         });
 
         setBooks(booksWithStatus);
@@ -326,9 +326,8 @@ function CatalogContent() {
                     <td className="py-4 px-6 text-sm text-gray-600">{book.authors}</td>
                     <td className="py-4 px-6">
                       <span
-                        className={`text-sm font-medium ${
-                          book.status === "Out" ? "text-red-600" : "text-green-600"
-                        }`}
+                        className={`text-sm font-medium ${book.status === "Out" ? "text-red-600" : "text-green-600"
+                          }`}
                       >
                         {book.status}
                       </span>
@@ -346,17 +345,6 @@ function CatalogContent() {
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function FindUserContent() {
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4" style={{ color: "#000000" }}>
-        Find User
-      </h1>
-      <p style={{ color: "#929292" }}>Find User content will go here</p>
     </div>
   );
 }
@@ -438,9 +426,8 @@ function CheckOutContent() {
       </div>
       {message && (
         <div
-          className={`mb-4 p-3 rounded-lg ${
-            message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
+          className={`mb-4 p-3 rounded-lg ${message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
         >
           {message.text}
         </div>
@@ -467,7 +454,7 @@ export function MainCard() {
         return "Check In";
       case "catalog":
         return "Catalog";
-      case "finduser":
+      case "borrower":
         return "Find User";
       case "checkout":
         return "Check Out";
@@ -482,8 +469,8 @@ export function MainCard() {
         return <CheckInContent />;
       case "catalog":
         return <CatalogContent />;
-      case "finduser":
-        return <FindUserContent />;
+      case "borrower":
+        return <Borrower />;
       case "checkout":
         return <CheckOutContent />;
       default:
