@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckSquare, BookOpen, User, BookPlus, Search, MoreVertical } from "lucide-react";
-import Borrower from "./Borrower";
+import { CheckSquare, BookOpen, User, BookPlus, Search, MoreVertical, BadgeDollarSign} from "lucide-react";
 
-type TabType = "dashboard" | "checkin" | "catalog" | "finduser" | "checkout" | "borrower";
+type TabType = "dashboard" | "checkin" | "catalog" | "finduser" | "checkout";
+import Borrower from "./Borrower";
+import FinesPage from "../fines/page";
 
 interface NavbarProps {
   activeTab: TabType;
@@ -16,6 +17,7 @@ function Navbar({ activeTab, onTabChange }: NavbarProps) {
     { id: "checkin" as TabType, label: "Check In", icon: CheckSquare },
     { id: "catalog" as TabType, label: "Catalog", icon: BookOpen },
     { id: "borrower" as TabType, label: "Users", icon: User },
+      { id: "fines" as TabType, label: "Manage Fines", icon: BadgeDollarSign},
     { id: "checkout" as TabType, label: "Check Out", icon: BookPlus },
   ];
 
@@ -473,6 +475,8 @@ export function MainCard() {
         return <Borrower />;
       case "checkout":
         return <CheckOutContent />;
+      case "fines":
+        return <FinesPage />;
       default:
         return <DashboardContent />;
     }
