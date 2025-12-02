@@ -94,13 +94,21 @@ export default function FinesPage() {
     <div style={{ padding: 20 }}>
       <h1>Fines Management</h1>
       <div style={{ marginBottom: 12 }}>
-        <button onClick={handleUpdate} disabled={loading} style={{ marginRight: 8 }}>
-          Refresh / Update Fines
+        <button className='py-2 px-4 bg-red-700 rounded-sm text-white hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed' 
+                onClick={handleUpdate} disabled={loading} style={{ marginRight: 8 }}>
+                Refresh / Update Fines
         </button>
         <label style={{ marginRight: 8 }}>
           <input type="checkbox" checked={includePaid} onChange={(e) => setIncludePaid(e.target.checked)} /> Include paid
         </label>
-        <button onClick={fetchFines} disabled={loading}>Reload</button>
+        <br/>
+        <br/>
+        <button 
+          onClick={fetchFines} 
+          disabled={loading}
+          className='py-2 px-4 bg-red-700 rounded-sm text-white hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed'>
+            Reload
+        </button>
       </div>
 
       {message && <div style={{ marginBottom: 12, color: 'darkblue' }}>{message}</div>}
