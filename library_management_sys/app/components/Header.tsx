@@ -1,38 +1,38 @@
 import Link from 'next/link';
 import { Fragment } from 'react';
+import { Home } from 'lucide-react';
 
 export const Header = () => {
   const navLinks = [
     { href: '/', text: 'Home' },
-    { href: '/about', text: 'About' },
-    { href: '/contact', text: 'Contact' },
-    { href: '/book_search', text: 'Catalog' },
   ];
 
   return (
-    <div className="flex flex-row">
-      <header className="bg-gray-800 text-white flex-col justify-between items-center">
+    <div className="flex flex-row h-full">
+      <header className="bg-background text-white flex flex-col justify-between items-center h-full p-[1rem] rounded-[1rem] border border-[#EBEBEB]">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="flex flex-col items-center space-y-[2rem]">
           <Link href="/">
-            <img src="/logo.png" alt="Logo" className="h-8 mr-2" />
+            <img src="/Logo.png" alt="Logo" className="h-8" />
           </Link>
+
+            <nav>
+            <ul className="bg-[#F6F6F6] p-[0.5rem] rounded-[0.25rem]">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href}>
+                    <Home
+                    color='#DF0000'
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
 
-        <nav>
-          <ul className="flex space-x-4">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href}>
-                  {link.text}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
         <div>
-          <Link href="/login" className="hover:underline">
+          <Link href="/login" className="hover:underline font-black">
             Login
           </Link>
         </div>
