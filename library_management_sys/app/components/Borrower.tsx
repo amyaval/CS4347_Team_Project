@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Search, MoreVertical } from "lucide-react";
+import NewUserModal from "./AddBorrower";
+
 
 interface Borrower {
     CardID: string;
@@ -18,6 +20,7 @@ export default function Borrower() {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [showModal, setShowModal] = useState(false);
 
     // Fetch all borrowers from API
     const fetchBorrowers = async () => {
@@ -90,7 +93,10 @@ export default function Borrower() {
                 <h1 className="text-3xl font-bold" style={{ color: "#000000" }}>
                     Find Users
                 </h1>
-                <button className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors">
+                <button
+                    className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors"
+                    onClick={() => setShowModal(true)}
+                >
                     Add User
                 </button>
             </div>
@@ -213,6 +219,12 @@ export default function Borrower() {
                     </div>
                 )}
             </div>
+            {showModal && (
+                <NewUserModal
+                    onClose={() => setShowModal(false)}
+                    onUserAdded={() => fetchBorrowers()}
+                />
+            )}
         </div>
     );
 }
