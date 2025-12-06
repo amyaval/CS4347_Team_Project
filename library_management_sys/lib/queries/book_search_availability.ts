@@ -8,11 +8,16 @@ export interface Book {
   Lname: string;
   Date_in: Date;
   Date_out: Date;
+  Card_id: string;
+}
+
+export interface BorrowerID {
+  Card_ID: string;
 }
 
 export async function book_search_availability(searchTerm: string): Promise<Book[]> {
   const query = `
-    SELECT A.Isbn, B.Title, C.Fname, C.Minit, C.Lname, L.Date_in, L.Date_out 
+    SELECT A.Isbn, B.Title, C.Fname, C.Minit, C.Lname, L.Date_in, L.Date_out, L.Card_id
     FROM BOOKS AS B 
     LEFT JOIN BOOK_LOANS AS L ON B.Isbn = L.Isbn 
     JOIN BOOK_AUTHORS AS A ON B.Isbn = A.Isbn
@@ -28,6 +33,19 @@ export async function book_search_availability(searchTerm: string): Promise<Book
   
   return results;
 }
+
+export async function getBorrowerIdByIsbn(isbn: string, date_in: Date, date_out: Date): Promise<BorrowerID[]> {
+  const query = `
+    SELECT BL.Card_ID
+    FROM BOOK_LOANS AS BL
+    WHERE BL.Isbn = ? AND BL.Date_in = ? AND BL.Date_out = ?`;
+  
+  // Pass the search pattern three times (once for each ? placeholder)
+  const results = await executeQuery({ query, values: [isbn, date_in, date_out] });
+  
+  return results;
+}
+
 
 export async function getAllBooks(): Promise<Book[]> {
   const query = "SELECT * FROM BOOKS";

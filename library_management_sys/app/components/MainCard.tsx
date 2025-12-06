@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { CheckSquare, BookOpen, User, BookPlus, Search, MoreVertical, BadgeDollarSign} from "lucide-react";
 
-type TabType = "dashboard" | "checkin" | "catalog" | "finduser" | "checkout";
+type TabType = "dashboard" | "checkin" | "catalog" | "borrower" | "checkout" | "fines";
 import Borrower from "./Borrower";
 import FinesPage from "../fines/page";
 
@@ -252,6 +252,7 @@ function CatalogContent() {
             date_in: dateIn,
             date_out: dateOut,
             status: isOut ? "Out" : "In",
+            card_id: book.Card_id ?? book.card_id ?? "",
           };
         });
 
@@ -316,6 +317,7 @@ function CatalogContent() {
                   <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Title</th>
                   <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Authors</th>
                   <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Status</th>
+                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Borrower ID</th>
                   <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Actions</th>
                 </tr>
               </thead>
@@ -333,6 +335,9 @@ function CatalogContent() {
                       >
                         {book.status}
                       </span>
+                    </td>
+                    <td className="py-4 px-6 text-sm text-gray-600">
+                      {book.card_id || "-"}
                     </td>
                     <td className="py-4 px-6">
                       <button className="text-red-600 hover:text-red-700 transition-colors">
