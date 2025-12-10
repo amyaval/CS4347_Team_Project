@@ -84,13 +84,13 @@ CREATE TABLE FINES (
     CONSTRAINT FK_BOOK_LOANS FOREIGN KEY (Loan_ID) REFERENCES BOOK_LOANS(Loan_ID)
 );
 
-LOAD DATA LOCAL INFILE 'C:/Users/valdi/Documents/Database_Team_Project_csv/books.csv'
+LOAD DATA LOCAL INFILE '/Users/thebenzsecrets/CS4347_Team_Project/books.csv'
 INTO TABLE RAW_DATA
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/Users/valdi/Documents/Database_Team_Project_csv/borrowers.csv'
+LOAD DATA LOCAL INFILE '/Users/thebenzsecrets/CS4347_Team_Project/borrowers.csv'
 INTO TABLE RAW_BORROWER_DATA
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'

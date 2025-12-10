@@ -57,3 +57,26 @@ export async function getBookById(id: number): Promise<Book | null> {
   const results = await executeQuery({ query, values: [id] });
   return results[0] || null;
 }
+
+export async function getNumBooks(): Promise<number> {
+  const query = 'SELECT COUNT(*) AS count FROM `BOOKS`';
+  const results = await executeQuery({ query });
+  
+  if (!results || results.length === 0) {
+    console.error('getNumUsers: No results returned from query');
+    return 0;
+  }
+
+  const firstResult = results[0];
+
+  const count = firstResult.count ?? firstResult.COUNT ?? firstResult['COUNT(*)'] ?? 0;
+
+  const numCount = typeof count === 'string' ? parseInt(count, 10) : Number(count);
+
+  if (isNaN(numCount)) {
+    console.error('getNumUsers: Invalid count value:', firstResult);
+    return 0;
+  }
+  
+  return numCount;
+}

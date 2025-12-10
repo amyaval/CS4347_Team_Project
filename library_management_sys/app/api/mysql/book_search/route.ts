@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { book_search_availability } from '@/lib/queries/book_search_availability';
 import { checkout } from '@/lib/queries/check_out';
-import { checkInBooks } from '@/lib/queries/check_in';
 
 export async function GET(request: Request) {
   try {
