@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search, MoreVertical } from "lucide-react";
 import NewUserModal from "./AddBorrower";
+import BorrowerDetailsModal from "./BorrowerDetailsModal";
 
 
 interface Borrower {
@@ -21,6 +22,8 @@ export default function Borrower() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [showModal, setShowModal] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const [selectedBorrower, setSelectedBorrower] = useState<Borrower | null>(null);
 
     // Fetch all borrowers from API
     const fetchBorrowers = async () => {
@@ -85,6 +88,30 @@ export default function Borrower() {
     };
 
     const visiblePages = getVisiblePages();
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            // Check if click is outside any dropdown
+            if (!target.closest('.dropdown-container')) {
+                setOpenDropdown(null);
+            }
+        };
+
+        if (openDropdown !== null) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [openDropdown]);
+
+    const handleSeeDetails = (borrower: Borrower) => {
+        setOpenDropdown(null);
+        setSelectedBorrower(borrower);
+    };
 
     return (
         <div className="p-6">
@@ -156,9 +183,27 @@ export default function Borrower() {
                                         <td className="py-4 px-6 text-sm text-gray-600">{borrower.address}</td>
                                         <td className="py-4 px-6 text-sm text-gray-600">{borrower.phone}</td>
                                         <td className="py-4 px-6">
-                                            <button className="text-red-600 hover:text-red-700 transition-colors">
-                                                <MoreVertical className="w-5 h-5" />
-                                            </button>
+                                            <div className="relative dropdown-container">
+                                                <button 
+                                                    onClick={() => {
+                                                        const borrowerKey = `${borrower.CardID}-${borrower.ssn}`;
+                                                        setOpenDropdown(openDropdown === borrowerKey ? null : borrowerKey);
+                                                    }}
+                                                    className="text-red-600 hover:text-red-700 transition-colors"
+                                                >
+                                                    <MoreVertical className="w-5 h-5" />
+                                                </button>
+                                                {openDropdown === `${borrower.CardID}-${borrower.ssn}` && (
+                                                    <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                                        <button
+                                                            onClick={() => handleSeeDetails(borrower)}
+                                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                                                        >
+                                                            See Details
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -223,6 +268,12 @@ export default function Borrower() {
                 <NewUserModal
                     onClose={() => setShowModal(false)}
                     onUserAdded={() => fetchBorrowers()}
+                />
+            )}
+            {selectedBorrower && (
+                <BorrowerDetailsModal
+                    borrower={selectedBorrower}
+                    onClose={() => setSelectedBorrower(null)}
                 />
             )}
         </div>

@@ -19,17 +19,17 @@ export async function book_search_availability(searchTerm: string): Promise<Book
   const query = `
     SELECT A.Isbn, B.Title, C.Fname, C.Minit, C.Lname, L.Date_in, L.Date_out, L.Card_id
     FROM BOOKS AS B 
-    LEFT JOIN BOOK_LOANS AS L ON B.Isbn = L.Isbn 
+    LEFT JOIN BOOK_LOANS AS L ON B.Isbn = L.Isbn AND L.Date_in IS NULL
     JOIN BOOK_AUTHORS AS A ON B.Isbn = A.Isbn
     JOIN AUTHORS AS C ON A.Author_id = C.Author_id
-    WHERE B.Title LIKE ? OR C.Fname LIKE ? OR C.Lname LIKE ?
+    WHERE B.Title LIKE ? OR C.Fname LIKE ? OR C.Lname LIKE ? OR B.Isbn LIKE ?
   `;
   
   // Add wildcards for LIKE search
   const searchPattern = `%${searchTerm}%`;
   
-  // Pass the search pattern three times (once for each ? placeholder)
-  const results = await executeQuery({ query, values: [searchPattern, searchPattern, searchPattern] });
+  // Pass the search pattern four times (once for each ? placeholder)
+  const results = await executeQuery({ query, values: [searchPattern, searchPattern, searchPattern, searchPattern] });
   
   return results;
 }
