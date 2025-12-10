@@ -119,3 +119,9 @@ export async function checkout(ISBN: string, Card_id: string) {
     
     return { message: 'Book checked out successfully', dueDate };
 }
+
+export async function getNumCheckOut(): Promise<number> {
+    const query = 'SELECT COUNT(*) AS count FROM `BOOK_LOANS`';
+    const results = await executeQuery({ query });
+    return results;
+}

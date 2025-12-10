@@ -61,6 +61,62 @@ function Navbar({ activeTab, onTabChange }: NavbarProps) {
 }
 
 function DashboardContent() {
+  const [numUsers, setNumUsers] = useState<number | null>(null);
+  const [numBooks, setNumBooks] = useState<number | null>(null);
+  const [numCheckedOut, setNumCheckedOut] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function loadNumUsers() {
+      try {
+        const res = await fetch("/api/mysql/users?count=1");
+        const data = await res.json();
+        
+        if (!res.ok) {
+          console.error('Error fetching user count:', data.error);
+          setNumUsers(0);
+          return;
+        }
+        
+        if (data.error) {
+          console.error('API error:', data.error);
+          setNumUsers(0);
+          return;
+        }
+        
+        setNumUsers(data.count ?? 0);
+      } catch (error) {
+        console.error('Error loading user count:', error);
+        setNumUsers(0);
+      }
+    }
+    async function loadNumBooks() {
+      try {
+        const res = await fetch("/api/mysql/book");
+        const data = await res.json();
+        
+        if (!res.ok) {
+          console.error('Error fetching book count:', data.error);
+          setNumBooks(0);
+          return;
+        }
+        
+        if (data.error) {
+          console.error('API error:', data.error);
+          setNumUsers(0);
+          return;
+        }
+        console.log(data);
+        setNumBooks(data.numBooks ?? 0);
+        setNumCheckedOut(data.numCheckOut[0].count ?? 0);
+      } catch (error) {
+        console.error('Error loading book count:', error);
+        setNumBooks(0);
+      }
+    }
+    loadNumUsers();
+    loadNumBooks();
+  },[]);
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4" style={{ color: "#000000" }}>
@@ -85,7 +141,7 @@ function DashboardContent() {
             <span style={{ color: "#B60000" }}>ℹ</span>
           </div>
           <p className="text-2xl font-bold" style={{ color: "#000000" }}>
-            17
+            {numUsers}
           </p>
         </div>
 
@@ -97,7 +153,7 @@ function DashboardContent() {
             <span style={{ color: "#B60000" }}>ℹ</span>
           </div>
           <p className="text-2xl font-bold" style={{ color: "#000000" }}>
-            17
+            {numBooks}
           </p>
         </div>
 
@@ -109,7 +165,7 @@ function DashboardContent() {
             <span style={{ color: "#B60000" }}>ℹ</span>
           </div>
           <p className="text-2xl font-bold" style={{ color: "#000000" }}>
-            17
+            {numCheckedOut}
           </p>
         </div>
 
@@ -221,10 +277,15 @@ function CheckInContent() {
   );
 }
 
-function CatalogContent() {
+interface CatalogContentProps {
+  onCheckoutClick?: (isbn: string) => void;
+}
+
+function CatalogContent({ onCheckoutClick }: CatalogContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
 
   // Fetch from API whenever searchQuery changes
   useEffect(() => {
@@ -267,6 +328,25 @@ function CatalogContent() {
 
     fetchBooks();
   }, [searchQuery]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Check if click is outside any dropdown
+      if (!target.closest('.dropdown-container')) {
+        setOpenDropdown(null);
+      }
+    };
+
+    if (openDropdown !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdown]);
 
   return (
     <div className="p-6">
@@ -340,9 +420,29 @@ function CatalogContent() {
                       {book.card_id || "-"}
                     </td>
                     <td className="py-4 px-6">
-                      <button className="text-red-600 hover:text-red-700 transition-colors">
-                        <MoreVertical className="w-5 h-5" />
-                      </button>
+                      <div className="relative dropdown-container">
+                        <button 
+                          onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
+                          className="text-red-600 hover:text-red-700 transition-colors"
+                        >
+                          <MoreVertical className="w-5 h-5" />
+                        </button>
+                        {openDropdown === index && book.status === "In" && (
+                          <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                            <button
+                              onClick={() => {
+                                setOpenDropdown(null);
+                                if (onCheckoutClick) {
+                                  onCheckoutClick(book.isbn);
+                                }
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                            >
+                              Check Out
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -356,11 +456,22 @@ function CatalogContent() {
   );
 }
 
-function CheckOutContent() {
+interface CheckOutContentProps {
+  initialISBN?: string;
+}
+
+function CheckOutContent({ initialISBN }: CheckOutContentProps) {
   const [isbn, setIsbn] = useState("");
   const [cardId, setCardId] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Update ISBN when initialISBN prop changes
+  useEffect(() => {
+    if (initialISBN) {
+      setIsbn(initialISBN);
+    }
+  }, [initialISBN]);
 
   const handleSubmit = async () => {
     if (!isbn || !cardId) {
@@ -454,6 +565,12 @@ function CheckOutContent() {
 
 export function MainCard() {
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
+  const [checkoutISBN, setCheckoutISBN] = useState<string>("");
+
+  const handleCheckoutClick = (isbn: string) => {
+    setCheckoutISBN(isbn);
+    setActiveTab("checkout");
+  };
 
   const getTitle = () => {
     switch (activeTab) {
@@ -475,11 +592,11 @@ export function MainCard() {
       case "checkin":
         return <CheckInContent />;
       case "catalog":
-        return <CatalogContent />;
+        return <CatalogContent onCheckoutClick={handleCheckoutClick} />;
       case "borrower":
         return <Borrower />;
       case "checkout":
-        return <CheckOutContent />;
+        return <CheckOutContent initialISBN={checkoutISBN} />;
       case "fines":
         return <FinesPage />;
       default:
