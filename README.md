@@ -10,4 +10,4 @@ If yall want to try it then do
 
 if you can't execute the script then run `chmod +x Create_DB_CSVs.sh` before trying again.
 
-And yes it's not the most secure script but wtv.
+And yes it's not the most secure script but whatever.
